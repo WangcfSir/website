@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.dao.PictureMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.website.system.model.Picture">
+		<id column="id" property="id" />
+		<result column="picture_id" property="pictureId" />
+		<result column="picture_url" property="pictureUrl" />
+		<result column="modular_name" property="modularName" />
+		<result column="sort" property="sort" />
+		<result column="type" property="type" />
+		<result column="state" property="state" />
+		<result column="article_id" property="articleId" />
+		<result column="article_title" property="articleTitle" />
+		<result column="upload_time" property="uploadTime" />
+		<result column="modify_time" property="modifyTime" />
+	</resultMap>
+
+	<!-- 根据类型(显示)获取他们的顺序 -->
+	<select id="getSortArray" parameterType="java.lang.Integer" resultType="java.lang.String">
+		SELECT GROUP_CONCAT(sort) FROM picture
+		WHERE state=1 AND type = #{type}
+	</select>
+
+	<!-- 修改状态(显示不显示) -->
+	<update id="updateStateById" parameterType="java.lang.Integer" >
+		UPDATE picture SET state = #{stateValue}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

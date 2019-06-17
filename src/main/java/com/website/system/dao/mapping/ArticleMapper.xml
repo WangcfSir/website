@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.dao.ArticleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="MessageResultMap" type="com.website.system.model.Article">
+		<id column="id" property="id" />
+		<result column="type" property="type" />
+		<result column="state" property="state" />
+		<result column="create_user" property="createUser" />
+		<result column="modify_user" property="modifyUser" />
+		<result column="create_time" property="createTime" />
+		<result column="modify_time" property="modifyTime" />
+		<result column="title" property="title" />
+		<result column="content" property="content" />
+		<result column="picture" property="picture" />
+		<result column="file" property="file" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="ArticleEasyResultMap" type="com.website.system.model.ArticleEasy">
+		<id column="id" property="id" />
+		<result column="title" property="title" />
+	</resultMap>
+
+	<!-- 获取图片文章（供主页配置使用） -->
+	<select id="getArticleEasyForPicture" resultMap="ArticleEasyResultMap">
+		select * from article
+		where state=1
+	</select>
+
+	<!-- 根据类型获取文章前四条 -->
+	<select id="getRankingByType" resultMap="MessageResultMap" >
+		select * from article
+		where state=1
+        <if test="type != null" >
+            and type=#{type}
+        </if>
+		order by create_time desc limit 0,#{rowNumber};
+	</select>
+
+	<!-- 修改文章状态(显示不显示) -->
+	<update id="updateStateById" parameterType="java.lang.Integer" >
+		UPDATE article SET state = #{stateValue}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

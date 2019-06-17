@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/css/x-admin.css" media="all">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/layui/css/layui.css" media="all">
+    <script src="${ctxPath}/static/manage/layui/layui.js"></script>
+    <script src="${ctxPath}/static/manage/js/jquery.js"></script>
+</head>
+<body>
+    <div class="x-nav">
+         <span class="nav-breadcrumb">
+                <a><cite>后台管理></cite></a>
+                <a><cite>用户管理></cite></a>
+                <a><cite>用户列表</cite></a>
+            </span>
+    </div>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote quoteBox">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input searchContent" placeholder="请输入账号或姓名或手机号" />
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-normal addNews_btn">添加管理员</a>
+            </div>
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新"><i class="layui-icon" style="line-height:30px">ဂ</i></a>
+
+        </blockquote>
+        <table id="userTable" lay-filter="userTable"></table>
+    </div>
+</body>
+</html>
+
+<script>
+    layui.use(['jquery', 'element', 'table', 'layer', 'util'], function(){
+        var $ = layui.$, table = layui.table, layer = layui.layer, util = layui.util;
+        var active = {
+            reload: function(){
+                table.reload('search_table_id', {
+                    where: {
+                        content: $('.searchContent').val(),
+                        page: 1
+                    }
+                });
+            }
+        };
+
+        table.render({
+            elem: '#userTable'
+            ,id: 'search_table_id'
+            ,height: 500
+            ,url: '/manage/user/userTable'
+            ,page: true
+            ,limit: 10
+            ,limits : [10]
+            ,cols: [[
+                { checkbox: true, fixed: true },
+                { field: 'id', title: '序号', width:150, sort: true, fixed: true },
+                { field: 'account', title: '账号', width:150, sort: true },
+                { field: 'name', title: '姓名', width:150, sort: true},
+                { field: 'sex', title: '性别', width:150, sort: true },
+                { field: 'phone', title: '手机', width:150, sort: true },
+                { field: 'createTime', title: '添加时间',width:180, sort: true,templet :function (d){return util.toDateString(d.createTime);}},
+                { field: 'state', title: '是否激活', width:100, event: 'state', templet: function(d){
+                        var html = ['<input type="checkbox" name="state" lay-skin="switch" lay-text="是|否"'];
+                        html.push(d.state == 1 ? ' checked' : '');
+                        html.push('/>');
+                        return html.join('');
+                    }
+                },
+                { field: 'tempId', title: '操作', width:180, templet: function(d){
+                        return '<a class="layui-btn layui-btn-xs" lay-event="edit" lay-id="'+ d.tempId +'"><i class="layui-icon layui-icon-edit"></i>编辑</a>' +
+                            '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="'+ d.tempId +'"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                    }
+                }
+            ]]
+        });
+
+        // 搜索（利用定义的active重新载入表格）
+        $('.search_btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        $('.addNews_btn').on('click', function(){
+            layer.open({
+                title : "添加管理员",
+                type : 2,
+                fix: false,
+                maxmin: true,
+                area: ['700px', '500px'],
+                content: "/manage/user/toUserAdd"
+            });
+        });
+
+
+        // 监听工具条
+        table.on('tool(userTable)', function (obj) {
+            // data当前行数据， lay-event或event 对应的值，当前行tr的DOM对象
+            var data = obj.data, event = obj.event, tr = obj.tr;
+            console.log(data);
+            switch(event){
+                case "edit":
+                    alert("网站管理员仅可修改自己信息,请在左侧目录个人中心修改");
+                    break;
+                case "state":
+                    var stateValue = tr.find("input[name='state']").prop('checked') ? 1 : 2;
+                    $.ajax({
+                        type: 'post',
+                        url: '/manage/user/updateUserState',
+                        data: {'id': data.id, 'stateValue': stateValue},
+                        success:function(result){
+                            alert(result);
+                            location.replace(location.href);                // 刷新
+                        }
+                    });
+                    break;
+                case "del":
+                    layer.confirm('确定删除该管理员吗？建议做失效处理', function(index){
+                        layer.close(index);
+                        $.ajax({
+                            type: 'post',
+                            url: '/manage/user/deleteUser',
+                            data: {'id': data.id},
+                            success:function(result){
+                                alert(result);
+                                window.location.reload();      // 刷新
+                            }
+                        });
+                    });
+                    break;
+            }
+        });
+    });
+
+</script>

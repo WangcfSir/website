@@ -1,0 +1,34 @@
+﻿
+<div id="articleList" style="display: none;">${articleList}</div>
+<div class="page_path"><div class="name"><a href="/page/search">搜索页面</a></div>
+	<span>您当前所在位置：<a href="/page/index">首页</a> > <a href="/page/search">搜索页面</a></span>
+</div>
+
+<form id="searchForm" action="/page/search">
+	<input type="text" placeholder="请输入查询关键字" id="content" name="content" value="${content}" style="width:230px; padding:6px;border:1px solid #345D95;" />
+	&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="search" value="搜索"/>
+</form>
+
+<div class="news-txt ny mg-t-b">
+	<div class="news-con">
+		<ul class="newslist ny"></ul>
+	</div>
+</div>
+
+<script type="text/javascript">
+    // 加载文章列表、左侧最新文章
+    $(document).ready(function(){
+        var ul = $('.newslist');
+        var articleList = $.parseJSON($("#articleList").text());
+
+        if(articleList != null && articleList[0] != null && articleList[0]!="" ){
+            $.each(articleList[0],function(index,item){
+                var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+                ul.append(li);
+            });
+        }else{
+            $(".news-con").text("暂无数据，请重新搜索");
+        }
+    });
+
+</script>

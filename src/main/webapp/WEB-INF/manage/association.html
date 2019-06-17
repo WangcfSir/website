@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>协会概况</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/css/x-admin.css" media="all">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/layui/css/layui.css" media="all">
+    <script src="${ctxPath}/static/manage/layui/layui.js"></script>
+    <script src="${ctxPath}/static/manage/js/jquery.js"></script>
+</head>
+<body>
+    <div class="x-nav">
+        <span class="nav-breadcrumb">
+            <a><cite>后台管理></cite></a>
+            <a><cite>网站首页></cite></a>
+            <a><cite>协会信息</cite></a>
+        </span>
+    </div>
+    <div class="x-body">
+        <table id="associationTable" lay-filter="associationTable"></table>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    layui.use(['jquery', 'table', 'layer', 'util'], function(){
+        var $ = layui.$, table = layui.table, layer = layui.layer, util = layui.util;
+
+        table.render({
+            elem: '#associationTable'
+            ,height: 500
+            ,url: 'association/associationTable'
+            ,page: false
+            ,cols: [[
+                { checkbox: true, fixed: true },
+                { field: 'id', title: '序号', width:150, sort: true, fixed: true },
+                { field: 'title', title: '协会内容', width:150, sort: true },
+                { field: 'sort', title: '显示顺序', width:150 },
+                { field: 'picture', title: '内容图片', width:150, templet :function (d){
+                    if(d.picture == null){return '<div>无图片</div>';}return '<div><img src="/{{d.picture}}"></div>';
+                }},
+                { field: 'createTime', title: '发布时间',width:180, sort: true,templet :function (d){return util.toDateString(d.createTime);}},
+                { field: 'modifyTime', title: '修改时间',width:180, sort: true,templet :function (d){return util.toDateString(d.modifyTime);}},
+
+                { field: 'tempId', title: '操作', width:180, templet: function(d){
+                        return '<a class="layui-btn layui-btn-xs" lay-event="read" lay-id="'+ d.tempId +'"><i class="layui-icon layui-icon-read"></i>查看</a>' +
+                            '<a class="layui-btn layui-btn-xs" lay-event="edit" lay-id="'+ d.tempId +'"><i class="layui-icon layui-icon-edit"></i>编辑</a>';
+                }}
+            ]]
+        });
+
+        // 监听工具条
+        table.on('tool(associationTable)', function (obj) {
+            // data当前行数据， lay-event或event 对应的值，当前行tr的DOM对象
+            var data = obj.data, event = obj.event;
+            console.log(data);
+            switch(event){
+                case "read":
+                    associationRead(data);
+                    break;
+                case "edit":
+                    associationUpdate(data);
+                    break;
+            }
+        });
+
+        // 查看
+        function associationRead(rowData) {
+            layer.open({
+                title : "查看" + rowData.title,
+                type : 2,
+                fix: false, //不固定
+                maxmin: true,
+                area: ['1000px', '600px'],
+                content: "/manage/association/toAssociationRead/" + rowData.id
+            });
+        }
+
+        // 编辑
+        function associationUpdate(rowData) {
+            layer.open({
+                title : "编辑" + rowData.title,
+                type : 2,
+                fix: false, //不固定
+                maxmin: true,
+                area: ['1000px', '600px'],
+                content: "/manage/association/toAssociationUpdate/" + rowData.id
+            });
+        }
+
+    });
+
+</script>

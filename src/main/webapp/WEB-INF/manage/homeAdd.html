@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页-添加</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/css/x-admin.css" media="all">
+</head>
+
+<body>
+<div class="x-body">
+
+    <input type="hidden" id="optionalTopSort" value="${optionalTopSort}"/>
+    <input type="hidden" id="optionalDownSort" value="${optionalDownSort}"/>
+
+    <form id="formAdd" class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="x-red">*</span>选择模块</label>
+            <div class="layui-input-inline typeSelect">
+                <select name="type" id="typePicture" lay-filter="typePicture">
+                    <option value="0">请选择</option>
+                    <option value="1">新闻图片</option>
+                    <!--<option value="2">滚动图片</option>-->
+                    <!--<option value="3">文章图片</option>-->
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="x-red">*</span>选择排序</label>
+            <div class="layui-input-inline sortPicture">
+                <select name="sort" id="sortPicture" lay-filter="sortPicture">
+                    <option value="0">请选择</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label articleId">对应文章</label>
+            <div class="layui-input-inline">
+                <select name="articleId" id="articleId" lay-filter="articleId">
+                    <option value="0">请选择</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label  class="layui-form-label">图片</label>
+
+            <div class="layui-col-md3 layui-col-xs5">
+                <div class="layui-upload-list thumbBox mag0 magt3">
+                    <img class="layui-upload-img thumbImg">
+                </div>
+            </div>
+            <input type="hidden" id="pictureId" name="pictureId" >
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <button class="layui-btn" type="button" lay-filter="add" lay-submit="">增加</button>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>
+<script src="${ctxPath}/static/manage/layui/layui.js" charset="utf-8"></script>
+<script src="${ctxPath}/static/manage/js/x-layui.js" charset="utf-8"></script>
+<script src="${ctxPath}/static/manage/js/jquery.js"></script>
+
+<script type="text/javascript">
+    layui.use(['form','layer','upload'], function(){
+        var $ = layui.$, form = layui.form, upload = layui.upload, layer = layui.layer;
+
+        // 上传缩略图
+        upload.render({
+            elem: '.thumbBox',
+            size: 600,
+            data: {typePicture: $('#typePicture').val(), sortPicture: $('#sortPicture').val()},
+            url: '/kaptcha/fileUpload',
+
+            before: function(obj){
+                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                layer.load();
+                obj.preview(function(index, file, result){
+                    $('.thumbImg').attr('src', result);
+                });
+            },
+            done: function(res){
+                // alert("图片上传成功吗，保存后生效");
+                layer.closeAll('loading');
+                $("#pictureId").val(res.data);
+                $('.thumbBox').css("background","#fff");
+                if(res.code != 0){
+                    alert(res.data);
+                }
+            }
+        });
+
+        // 监听选择（选择图片类型，动态生成选择排序）
+        form.on('select(typePicture)', function(data){
+            var optionalTopSort = $("#optionalTopSort").val();
+            var optionalDownSort = $("#optionalDownSort").val();
+
+            if(data.value == 1){
+                $("#articleId").attr("disabled",false);
+                $("#sortPicture").attr("disabled",false);
+                $("#sortPicture").html("");
+                for(var i=0; i<optionalTopSort.length; i++){
+                    var optionalTop = optionalTopSort.charAt(i);
+                    $("#sortPicture").append("<option value=" + optionalTop + ">"+ '显示在第'+optionalTop+'张'+"</option>");
+                }
+            }
+            if(data.value == 2){
+                $("#articleId").attr("disabled",true);
+                $("#sortPicture").attr("disabled",true);
+                // $("#sortPicture").html("");
+                // for(var j=0; j<optionalDownSort.length; j++){
+                //     var optionalDown = optionalDownSort.charAt(j);
+                //     $("#sortPicture").append("<option value=" + optionalDown + ">"+ '显示在第'+optionalDown+'张'+"</option>");
+                // }
+            }
+            form.render();      // 重新渲染表单
+        });
+
+        // 监听提交
+        form.on('submit(add)', function(){
+            var type = $("#typePicture").val();
+            var sortPicture = $("#sortPicture").val();
+            var pictureId = $("#pictureId").val();
+
+            if( type<= 0){
+                alert("请选择图片类型");
+                // alert("图片类型或者显示顺序没有选择");
+                return false;
+            }
+            if(sortPicture <= 0){
+                alert("请选择该图片排序");
+                return false;
+            }
+            if(pictureId.length <= 0){
+                alert("没有选择图片,或图片上传失败");
+                return false;
+            }
+
+            $.ajax({
+                url:'/manage/home/homeAdd',
+                type:'post',
+                data:$("#formAdd").serialize(),
+                success:function(result){
+                    alert(result);
+                    window.parent.location.reload();
+                },
+                error:function(result){
+                    alert("失败？请及时告知开发人员"+result);
+                    window.parent.location.reload();
+                }
+
+            });
+        });
+    });
+</script>

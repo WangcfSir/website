@@ -1,0 +1,38 @@
+﻿
+
+<div id="files" style="display: none;">${files}</div>
+<div class="page_path"><div class="name">下载中心</div><span>您当前所在位置：<a href="index">首页</a> > <a href="#">下载中心</a></span></div>
+<table id="filesTable" width="95%" border="0" align="center" style="margin-top:10px;"></table>
+<div class="tcdPageCode"></div>
+
+<script type="text/javascript">
+    // 左侧最新文章列表、下载中心列表
+    $(document).ready(function(){
+        console.log($("#articleArray").text());
+        var fileArray = $.parseJSON($("#files").text());
+        var filesTable = $('#filesTable');
+
+        $.each(fileArray[0],function(index,item){
+            var $tr = $('<tr>');
+            var $td1 = $('<td width="3%" height="35" align="left" class="boder1">').html('<img src="${ctxPath}/static/page/images/sficon.png" />');
+            $tr.append($td1);
+            $.each(item,function(name,val){
+                if(name == 'fileName'){
+                    var $td2 = $('<td width="67%" align="left" class="boder1">').html(val);
+                }
+                if(name == 'fileUrl'){
+                    var $td3 = $('<td width="18%" align="center"  class="boder1">').html('<a href="/'+val+'" target="_blank"><img src="${ctxPath}/static/page/images/down.jpg" alt="点击下载文件" width="89" height="23" /></a>');
+                }
+                if(name == 'uploadTime'){
+                    var valFormat = new Date(val).format("yyyy-MM-dd");
+                    var $td4 = $('<td width="12%" align="left" class="boder1 time">').html(valFormat);
+                }
+                $tr.append($td2);
+                $tr.append($td3);
+                $tr.append($td4);
+            });
+            filesTable.append($tr);
+        });
+    });
+</script>
+

@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!--作者: yanqb 时间：2018-11-16-->
+	<title>郑州市建设安全管理协会-文章内容</title>
+	<link href="${ctxPath}/static/page/css/base.css" rel="stylesheet" type="text/css" />
+	<link href="${ctxPath}/static/page/css/main.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="${ctxPath}/static/page/js/jquery-1.8.3.min.js"></script>
+	<link rel="shortcut icon" href="${ctxPath}/static/page/images/website.jpg" type="image/x-icon">
+	<script src="${ctxPath}/static/page/js/jquery.leoweather.min.js"></script>
+	<link href="${ctxPath}/static/page/css/jquery.slideBox.css" rel="stylesheet" type="text/css" />
+	<script src="${ctxPath}/static/page/js/jquery.slideBox.min.js" type="text/javascript"></script>
+	<script type="text/javascript"  src="${ctxPath}/static/page/js/nav.js"></script>
+</head>
+<body>
+<div>
+	<input type="hidden" id="type" value="${article.type}"/>
+	<div id="articleArray" style="display: none;">${articleArray}</div>
+	<!--头部导航-logo开始-->
+	<div class="top">
+		<div class="container">
+			<div id="weather" style="margin-left:10px;"></div>
+			<div class="toptxt">
+				<a href="#">当前用户：游客</a>|
+				<a href="/manage/login" target="_blank">管理员登录</a>
+				<a href="#">当天访问量：9次</a>
+				<a id="addCollect" href="#" onclick="addCollect()">加入收藏夹</a>
+			</div>
+		</div>
+	</div>
+	<!--头部背景logo-->
+	<div class="header"></div>
+	<div class="nav">
+		<ul class="" id="navul">
+			<li><a href="/index"><img src="${ctxPath}/static/page/images/home.png" style="width:16px;"/>&nbsp;首页</a></li>
+			<li><a href="/page/summary">协会概况</a>
+				<ul>
+					<li><a href="/page/summary1">协会简介</a></li>
+					<li><a href="/page/summary2">协会章程</a></li>
+					<li><a href="/page/summary3">领导班子</a></li>
+					<li><a href="/page/summary4">联系我们</a></li>
+				</ul>
+			</li>
+			<li id="1"><a href="/page/articleList1">文件公告</a></li>
+			<li id="2"><a href="/page/articleList2">行业动态</a></li>
+			<li id="3"><a href="/page/articleList3">政策法规</a></li>
+			<li><a href="/page/download">下载中心</a></li>
+		</ul>
+	</div>
+
+	<div class="container mg-t-b">
+
+		<div class="page-left">
+			<div class="pagelist">
+				<h1>最新动态</h1>
+				<ul id="fiveList"></ul>
+				<div style="height: 100px"></div>
+				<h1>联系我们</h1>
+				<ul>
+					<div>地址：${company.address}</div>
+					<li>电话：${company.phone}</li>
+					<li>传真：${company.phone}</li>
+					<li>邮箱：${company.email}</li>
+					<li>邮编：${company.zip}</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="page-right">
+			<div class="page_path"><div class="name"><a href="/page/articleList${article.type}">${article.typeName}</a></div>
+				<span>您当前所在位置：<a href="/page/index">首页</a> > <a href="/page/articleList${article.type}">${article.typeName}</a></span>
+			</div>
+			<div class="article_title">${article.title}</div>
+			<div class="article_time"><span>发布人：${article.createUser}</span>|<span>发布时间：${article.createTime}</span></div>
+			<div class="article_txt">${article.content}
+			</div>
+
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+<div class="clearfix"></div>
+<div class="foot">
+	<div class="foot-container">
+		<center>
+			<span><a href="/page/index" target="_blank">网站首页</a></span>|&nbsp;
+			<span><a href="/page/summary" target="_blank">协会概况</a></span>|&nbsp;
+			<span><a href="/manage/login" target="_blank">管理员登录</a></span>|&nbsp;
+			<span><a href="/manage/login" target="_blank">安全管理平台</a></span>|&nbsp;
+			<span><a href="/page/download">下载中心</a></span>|&nbsp;
+			<span><a href="#">联系我们</a></span>
+		</center>
+	</div>
+</div>
+<div class="foot">
+	<div class="foot-container">
+		<center>
+			Copyright © 2018 - 2023 郑州市建设安全管理协会
+			&nbsp;&nbsp;技术支持：郑州旭宏信息技术有限公司&nbsp;&nbsp;
+			联系电话：0371-55636671
+		</center>
+	</div>
+</div>
+
+<script type="text/javascript">
+    // 左侧最新文章,加载当前位置样式
+    $(document).ready(function(){
+        var articleArray = $.parseJSON($("#articleArray").text());
+        var fiveList = $('#fiveList');
+        $.each(articleArray[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a></li>";
+            fiveList.append(li);
+        });
+
+        var type =  $("#type").val();
+        $("#"+type).addClass("active");
+    });
+    $('#weather').leoweather({format:'<span id="colock">{时段}好！现在时间是：{年}年{月}月{日}日 星期{周} {时}:{分}:{秒}</span>'});
+</script>
+</body>
+</html>
