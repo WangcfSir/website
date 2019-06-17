@@ -1,0 +1,47 @@
+﻿
+<input type="hidden" id="type" value="${type}"/>
+<input type="hidden" id="totalPageNum" value="${totalPageNum}"/>
+<div id="articleList" style="display: none;">${articleList}</div>
+
+<div class="page_path"><div class="name"><a href="/page/articleList${type}">${typeName}</a></div>
+	<span>您当前所在位置：<a href="/page/index">首页</a> > <a href="/page/articleList${type}">${typeName}</a></span>
+</div>
+
+<div class="news-txt ny mg-t-b">
+	<div class="news-con"><ul class="newslist ny"></ul></div>
+	<div class="tcdPageCode"></div>
+</div>
+
+<script type="text/javascript">
+    // 加载文章列表、分页插件
+    $(document).ready(function(){
+        var articleList = $.parseJSON($("#articleList").text());
+        var ul = $('.newslist');
+        $.each(articleList[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+            ul.append(li);
+        });
+    });
+
+
+    $(".tcdPageCode").createPage({
+        pageCount:$("#totalPageNum").val(),
+        current:1,
+        backFn:function(current){
+            $.ajax({
+                url:'/page/articleListPage',
+                type:'post',
+                data: {'type': $("#type").val(), 'current': current},
+                success:function(result){
+                    $('.newslist li').remove();
+                    var ul = $('.newslist');
+                    $.each(result[0],function(index,item){
+                        var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+                        ul.append(li);
+                    });
+                }
+            });
+
+        }
+    });
+</script>

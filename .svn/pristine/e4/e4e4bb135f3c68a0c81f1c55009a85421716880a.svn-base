@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.website.system.dao.UserMapper">
+
+	<sql id="Base_Column_List">
+		id, account, password, name, birthday, sex, email, avatar,
+		phone, dept_id, level, state, create_time, version
+	</sql>
+
+	<!-- 用于登录校验 -->
+	<select id="loginValid" resultType="user">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where state = 1
+		and (phone = #{username} or account = #{username} or email=#{username})
+		and password = #{password}
+	</select>
+
+	<!-- 用于判断是否可以添加或者修改保存 -->
+	<select id="getByAccount" resultType="java.lang.String">
+		SELECT GROUP_CONCAT(id) FROM user
+		where account = #{account} or phone = #{phone}
+	</select>
+
+	<!-- 修改用户状态(激活与不激活) -->
+	<update id="updateStateById" parameterType="java.lang.Integer" >
+		update user set state = #{stateValue}
+		where id = #{id}
+	</update>
+
+	<!-- 修改密码 -->
+	<update id="changePwd">
+		update user set password = #{pwd}
+		where id = #{userId}
+	</update>
+
+</mapper>

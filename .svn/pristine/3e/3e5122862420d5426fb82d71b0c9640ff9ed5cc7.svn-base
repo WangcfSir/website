@@ -1,0 +1,227 @@
+package com.website.system.controller;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.website.common.controller.BaseController;
+import com.website.common.warpper.ResultMap;
+import com.website.core.util.DateUtil;
+import com.website.system.model.Doctor;
+import com.website.system.model.DoctorCategory;
+import com.website.system.model.vo.DoctorDto;
+import com.website.system.service.DoctorCategoryService;
+import com.website.system.service.DoctorService;
+import io.swagger.annotations.ApiOperation;
+import net.sf.json.JSONObject;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * 医生 前端控制器
+ *
+ * @author wangcf
+ * @since 2019-6-11
+ */
+@Controller
+@RequestMapping("/manage/doctor")
+public class DoctorController extends BaseController {
+    
+    @Resource
+    private DoctorService doctorService;
+
+    @Resource
+    private DoctorCategoryService doctorCategoryService;
+
+    /**
+     * 加载数据 后台-->医生管理
+     */
+    @RequestMapping("")
+    public String doctor() {
+        return "manage/doctor";
+    }
+
+    @ApiOperation("下载中心JSON数据")
+    @ResponseBody
+    @RequestMapping("/doctorTable")
+    public ResultMap doctorTable(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam(required =false) String content) {
+        ResultMap<List<DoctorDto>> resultMap = new ResultMap<>(SUCCESS_CODE, SUCCESS_MSG, null, null);
+        Page<Doctor> pageInfo = new Page<>(page,limit);
+        Wrapper<Doctor> wrapper = new EntityWrapper<>();
+        wrapper = content == null ? wrapper : wrapper.like("name", content);
+        List<Doctor> doctorList;
+        DoctorCategory doctorCategory;
+        List<DoctorDto> doctorDtoList=new ArrayList<DoctorDto>();
+           doctorList = doctorService.selectPage(pageInfo,wrapper.orderBy("id", true)).getRecords();
+           for (Doctor d:doctorList) {
+                doctorCategory = doctorCategoryService.selectById(d.getDoctorcategoryid());
+                DoctorDto dto=new DoctorDto();
+                dto.setType(doctorCategory.getType());
+                dto.setName(d.getName());
+                dto.setBirthday(d.getBirthday());
+                dto.setDoctorcategoryid(d.getDoctorcategoryid());
+                dto.setEmail(d.getEmail());
+                dto.setId(d.getId());
+                dto.setPhone(d.getPhone());
+                dto.setSex(d.getSex());
+                dto.setVersion(d.getVersion());
+                dto.setImgUrl(d.getImgUrl());
+                doctorDtoList.add(dto);
+        }
+        resultMap.setCount(doctorService.selectCount(wrapper));
+        resultMap.setData(doctorDtoList);
+        return resultMap;
+    }
+
+    /**
+     * 添加医生
+     */
+    @RequestMapping("/doctorAdd")
+    public String doctorAdd() {
+        return "manage/doctorAdd";
+    }
+
+    /**
+     * 保存新建医生
+     */
+    @ResponseBody
+    @RequestMapping(value = "/toDoctorAdd",method = RequestMethod.POST)
+    public String toDoctorAdd(@ModelAttribute Doctor doctor) {
+        try {
+            doctorService.insert(doctor);
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+    /**
+     * 修改页面跳转
+     */
+    @RequestMapping("/selDoctor/{id}")
+    public String selDoctor(Model model, @PathVariable Integer id) {
+        Doctor doctor = doctorService.selectById(id);
+        doctor.setName(doctor.getName().replaceAll("\"","&quot;"));
+        model.addAttribute("doctor", doctor);
+        return "manage/doctorUpdate";
+    }
+
+    /**
+     *  加载医生类别
+     */
+    @ResponseBody
+    @RequestMapping(value = "/SelDoctorCategory",method = RequestMethod.POST)
+    public List<DoctorCategory> SelDoctorCategory() {
+        Wrapper<DoctorCategory> w = new EntityWrapper<>();
+        List<DoctorCategory> list=doctorCategoryService.selectList(w);
+        return list;
+    }
+
+    /**
+     * 修改保存
+     */
+    @ResponseBody
+    @RequestMapping("/doctorUpdate")
+    public String doctorUpdate(@ModelAttribute Doctor doctor) {
+        try{
+            doctorService.updateById(doctor);
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+    /**
+     * 删除（下载中心--->列表操作）
+     */
+    @ResponseBody
+    @RequestMapping(value = "/deleteDoctor",method = RequestMethod.POST)
+    public String deleteDoctor(@Param("id") Integer id) {
+        try{
+            doctorService.deleteById(id);
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+    /**
+     * 图片页面跳转
+     */
+    @RequestMapping("/selImg/{id}")
+    public String selImg(Model model, @PathVariable Integer id) {
+        model.addAttribute("doctorid", id);
+        return "manage/UpImages";
+    }
+
+    /**
+     * 保存图片（多文件 没有在用）
+     */
+    @RequestMapping(value = "/saveImgs",method = RequestMethod.POST)
+    @ResponseBody
+    public String saveImg(MultipartFile file, HttpServletRequest request, HttpSession session,@Param("id") String id) throws IOException {
+        Doctor doctor=new Doctor();
+        doctor.setId(Integer.parseInt(id));
+        JSONObject json = new JSONObject(); // 原始名称
+        String originalFilename = file.getOriginalFilename();
+        if (file != null && originalFilename != null && originalFilename.length() > 0) {
+            //获取后缀名
+            String sufixName = originalFilename.substring(originalFilename.indexOf("."));
+            //重命名
+            String newName = UUID.randomUUID() + sufixName;
+            //设置文件上传的目录
+            String picPath=getFileUploadPath()+ "/image/" ;
+            File filePath=new File(picPath);
+            //如果保存文件的地址不存在，就先创建目录
+            if(!filePath.exists()){
+                filePath.mkdirs();
+            } // 新图片
+            File newFile = new File(picPath+newName);
+            // 将内存中的数据写入磁盘
+            file.transferTo(newFile);
+            session=request.getSession();
+            json.put("code", 0);
+            json.put("face", newName);
+            doctor.setImgUrl("/files/image/"+newName);
+            doctorService.updateById(doctor);
+            System.out.println(json.toString());
+            return json.toString();
+        }
+        json.put("code", 1);
+        System.out.println(json.toString());
+        return json.toString();
+    }
+
+    /**
+     * 上传图片(单文件 在用)
+     */
+    @RequestMapping(path = "/saveImg", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultMap fileUpload(@Param("doctorid") String doctorid,@Param("pictureId") String pictureId) {
+        Doctor doctor=new Doctor();
+        doctor.setId(Integer.parseInt(doctorid));
+        String pictureName = pictureId;
+        try {
+            doctor.setImgUrl("/files/image/"+pictureName+ ".jpg");
+            doctorService.updateById(doctor);
+            return getResultMap(SUCCESS_CODE,pictureName);
+        } catch (Exception e) {
+            return getResultMap(ERROR_CODE,"图片上传失败，请稍后重试，或联系管理员");
+        }
+    }
+
+}

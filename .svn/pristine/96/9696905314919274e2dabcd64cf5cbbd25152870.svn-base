@@ -1,0 +1,177 @@
+package com.website.system.controller;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.website.common.controller.BaseController;
+import com.website.common.warpper.ResultMap;
+import com.website.system.model.Doctor;
+import com.website.system.model.DoctorCategory;
+import com.website.system.model.vo.DoctorDto;
+import com.website.system.service.DoctorCategoryService;
+import com.website.system.service.DoctorService;
+import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 医生 前端控制器
+ *
+ * @author yanqb
+ * @since 2018-12-04
+ */
+@Controller
+@RequestMapping("manage/doctor")
+public class DoctorController extends BaseController {
+    
+    @Resource
+    private DoctorService doctorService;
+    @Resource
+    private DoctorCategoryService doctorCategoryService;
+
+    /**
+     * 跳转到 后台-->下载中心管理
+     */
+    @RequestMapping("")
+    public String doctor() {
+        return "manage/doctor";
+    }
+    
+    /**
+     * 加载数据 后台-->下载中心管理
+     */
+    @ApiOperation("下载中心JSON数据")
+    @ResponseBody
+    @RequestMapping("/doctorTable")
+    public ResultMap downloadTable(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam(required =false) String content) {
+        ResultMap<List<DoctorDto>> resultMap = new ResultMap<>(SUCCESS_CODE, SUCCESS_MSG, null, null);
+        Page<Doctor> pageInfo = new Page<>(page,limit);
+        Wrapper<Doctor> wrapper = new EntityWrapper<>();
+        wrapper = content == null ? wrapper : wrapper.like("name", content);
+        List<Doctor> doctorList;
+        DoctorCategory doctorCategory;
+        List<DoctorDto> doctorDtoList=new ArrayList<DoctorDto>();
+        /*System.out.println("********"+content+"*****************");*/
+        if(content==null){
+           doctorList = doctorService.selectPage(pageInfo,wrapper.orderBy("id", true)).getRecords();
+
+        }else{
+
+            doctorList = doctorService.selectList(wrapper);
+        }
+        for (Doctor d:doctorList) {
+
+
+                doctorCategory = doctorCategoryService.selectById(d.getDoctorcategoryid());
+           // System.out.println(doctorCategory.getType());
+                DoctorDto dto=new DoctorDto();
+                dto.setType(doctorCategory.getType());
+                dto.setName(d.getName());
+                dto.setBirthday(d.getBirthday());
+                dto.setDoctorcategoryid(d.getDoctorcategoryid());
+                dto.setEmail(d.getEmail());
+                dto.setId(d.getId());
+                dto.setPhone(d.getPhone());
+                dto.setSex(d.getSex());
+                dto.setVersion(d.getVersion());
+
+                doctorDtoList.add(dto);
+
+
+        }
+
+        resultMap.setCount(doctorService.selectCount(wrapper));
+        resultMap.setData(doctorDtoList);
+        return resultMap;
+    }
+
+
+
+
+
+    /**
+     * 添加医生
+     */
+    @RequestMapping("/doctorAdd")
+    public String doctorAdd() {
+        return "manage/doctorAdd";
+    }
+    /**
+     * 保存新建医生
+     */
+    @ResponseBody
+    @RequestMapping(value = "/toDoctorAdd",method = RequestMethod.POST)
+    public String articleAdd(@ModelAttribute Doctor doctor) {
+        try {
+
+            doctorService.insert(doctor);
+           // System.out.println("********"+doctorService.insert(doctorDto)+"*****************");
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+    /**
+     * 修改页面跳转
+     */
+
+    @RequestMapping("/selDoctor/{id}")
+    public String getArticle(Model model, @PathVariable Integer id) {
+        Doctor doctor = doctorService.selectById(id);
+        doctor.setName(doctor.getName().replaceAll("\"","&quot;"));
+        model.addAttribute("doctor", doctor);
+        return "manage/doctorUpdate";
+    }
+    /**
+     *  加载医生类别
+     */
+    @ResponseBody
+    @RequestMapping(value = "/SelDoctorCategory",method = RequestMethod.POST)
+    public List<DoctorCategory> SelDoctorCategory() {
+        Wrapper<DoctorCategory> w = new EntityWrapper<>();
+        List<DoctorCategory> list=doctorCategoryService.selectList(w);
+        return list;
+    }
+
+
+    /**
+     * 修改保存
+     */
+    @ResponseBody
+    @RequestMapping("/doctorUpdate")
+    public String articleUpdate(@ModelAttribute Doctor doctor) {
+        try{
+
+            doctorService.updateById(doctor);
+           // System.out.println("********"+doctorService.updateById(doctor)+"*****************");
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+    /**
+     * 删除（下载中心--->列表操作）
+     */
+    @ResponseBody
+    @RequestMapping(value = "/deleteDoctor",method = RequestMethod.POST)
+    public String deleteDoctor(@Param("id") Integer id) {
+        try{
+            doctorService.deleteById(id);
+            return SUCCESS_MSG;
+        }catch (Exception e){
+            return ERROR_MSG;
+        }
+    }
+
+
+
+
+}

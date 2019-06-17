@@ -1,0 +1,67 @@
+package com.website.system.controller;
+
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.website.common.controller.BaseController;
+import com.website.common.warpper.ResultMap;
+import com.website.system.model.DoctorCategory;
+import com.website.system.service.DoctorCategoryService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
+@Controller
+@RequestMapping("manage/doctorCategory")
+public class DoctorCategoryController extends BaseController {
+    @Resource
+    private DoctorCategoryService doctorCategoryService;
+
+
+    /**
+     * 加载数据
+     */
+    /*@ResponseBody
+    @RequestMapping("/doctorCategoryTable")
+    public ResultMap doctorCategoryTable(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam(required =false) String content) {
+        ResultMap<List<DoctorCategory>> resultMap = new ResultMap<>(SUCCESS_CODE, SUCCESS_MSG, null, null);
+        Page<DoctorCategory> pageInfo = new Page<>(page,limit);
+        Wrapper<DoctorCategory> wrapper = new EntityWrapper<>();
+        wrapper = content == null ? wrapper : wrapper.like("id", content);
+        List<DoctorCategory> dcgList;
+        if(content==null){
+            dcgList = doctorCategoryService.selectPage(pageInfo,wrapper.orderBy("id", true)).getRecords();
+        }else{
+            dcgList = doctorCategoryService.selectList(wrapper);
+        }
+
+        resultMap.setCount(doctorCategoryService.selectCount(wrapper));
+        resultMap.setData(dcgList);
+        return resultMap;
+    }*/
+
+
+    /**
+     *  加载医生类别
+     */
+    @ResponseBody
+    @RequestMapping(value = "/SelDoctorCategory",method = RequestMethod.POST)
+    public List<DoctorCategory> SelDoctorCategory() {
+        Wrapper<DoctorCategory> w = new EntityWrapper<>();
+        List<DoctorCategory> list=doctorCategoryService.selectList(w);
+        return list;
+    }
+
+
+    /**
+     *  查询医生类别
+     */
+    @ResponseBody
+    @RequestMapping(value = "/SelTypeById",method = RequestMethod.POST)
+    public Object SelTypeById(Integer id) {
+        DoctorCategory doctorCategory=doctorCategoryService.selectById(id);
+        //System.out.println("doctorCategory.getType()"+doctorCategory.getType());
+        return doctorCategory;
+    }
+}

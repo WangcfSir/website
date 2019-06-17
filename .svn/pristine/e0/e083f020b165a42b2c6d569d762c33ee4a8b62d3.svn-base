@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户管理-编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/css/x-admin.css" media="all">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/layui/css/layui.css" media="all">
+    <script src="${ctxPath}/static/manage/layui/layui.js"></script>
+    <script src="${ctxPath}/static/manage/js/jquery.js"></script>
+    <script type="text/javascript" src="${ctxPath}/static/page/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="${ctxPath}/static/page/js/comment.js"></script>
+    <script type="text/javascript" src="${ctxPath}/static/manage/js/util.js"></script>
+</head>
+    <body>
+        <div class="x-nav">
+            <span class="nav-breadcrumb">
+                <a><cite>后台管理></cite></a>
+                <a><cite>个人中心></cite></a>
+                <a><cite>修改资料</cite></a>
+            </span>
+        </div>
+        <div class="x-body">
+            <form action="/SaveImg" method="post" enctype="multipart/form-data">
+                <!--method必须为post enctype必须设置为multipart/form-data否则后台的HttpFileCollection的Count属性为0-->
+                <input class="layui-icon-file" type="file" name="ImageFile"  />
+                <input class="layui-btn layui-btn-warm layui-inline sign_in_btn" type="submit"  value="上传" />
+            </form>
+            <form class="layui-form" id="formUpdate">
+                <input type="hidden" name="id" value="${currentUser.id}"/>
+                <input type="hidden" id="sex" name="sex" value="${currentUser.sex}"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="x-red">*</span>用户账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="account" name="account" required lay-verify="required" class="layui-input" value="${currentUser.account}">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux"><span class="x-red">*</span>必填 可用于登录</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span class="x-red">*</span>用户名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" required lay-verify="required" autocomplete="off" class="layui-input" value="${currentUser.name}">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux"><span class="x-red">*</span>必填 用户姓名</div>
+                </div>
+                <div class="layui-form-item openness">
+                    <label class="layui-form-label"><span class="x-red">*</span>用户性别</label>
+                    <div class="layui-input-block">
+                        <input type="radio" name="sex" value="1" title="男性" lay-skin="primary" checked/>
+                        <input type="radio" name="sex" value="2" title="女性" lay-skin="primary" />
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">联系电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="phone" name="phone" class="layui-input" value="${currentUser.phone}">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">可用于登录</div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">出生年月</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="birthday" name="version" class="layui-input" value="${currentUser.birthday}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户邮箱</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="email" name="email" class="layui-input" value="${currentUser.email}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户等级</label>
+                    <div class="layui-input-inline">
+                        <input type="text" disabled="" class="layui-input" value="${currentUser.Level == 1?'高级管理员':'普通管理员'}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户状态</label>
+                    <div class="layui-input-inline">
+                        <input type="text" disabled="" class="layui-input" value="正常状态">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <button class="layui-btn" type="button" lay-filter="update" lay-submit>提交</button>
+                </div>
+            </form>
+        </div>
+    </body>
+    <script type="text/javascript">
+        layui.use(['jquery', 'form', 'laydate'], function(){
+            var $ = layui.$, form = layui.form, laydate=layui.laydate;
+            laydate.render({
+                elem: '#birthday'
+            });
+
+            //监听提交
+            form.on('submit(update)', function(){
+                var phone = $("#phone").val();
+                var email = $("#email").val();
+
+                // 校验手机号是否合法，邮箱是否合法
+                if(!checkMobile(phone)){
+                    alert("手机号码不合法");
+                    return false;
+                }
+
+                if(email.length>30){
+                    alert("邮箱地址长度不能超过30个字符");
+                    return false;
+                }
+                if(!checkEmail(email)){
+                    alert("邮件地址不合法");
+                    return false;
+                }
+
+                $.ajax({
+                    url:'/manage/user/userUpdate',
+                    type:'post',
+                    data:$("#formUpdate").serialize(),
+                    success:function(result){
+                        alert(result);
+                        if(result == "处理成功"){
+                            window.parent.location.reload();
+                        }
+                    },
+                    error:function(result){
+                        alert("失败？请及时告知开发人员"+result);
+                        window.location.reload();
+                    }
+
+                });
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        // 初始化性别单选，日期格式化
+        $(document).ready(function(){
+            var birthday = $("#birthday").val();
+            var sex = $("#sex").val();
+            if(birthday != '' && birthday != null){
+                $("#birthday").val(new Date(birthday).format("yyyy-MM-dd"));
+            }
+            if(sex == 2){
+                $("input[name='sex'][value=2]").attr("checked",true);
+            }
+        });
+    </script>
+
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html >
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!--作者: yanqb 时间：2018-11-16-->
+	<title>郑州市建设安全管理协会</title>
+	<link href="${ctxPath}/static/page/css/base.css" rel="stylesheet" type="text/css" />
+	<link href="${ctxPath}/static/page/css/main.css" rel="stylesheet" type="text/css" />
+	<link href="${ctxPath}/static/page/css/tab-zcl.css?20190311" rel="stylesheet" type="text/css" />
+	<link href="${ctxPath}/static/page/css/jquery.slideBox.css" rel="stylesheet" type="text/css" />
+	<link rel="shortcut icon" href="${ctxPath}/static/page/images/website.jpg" type="image/x-icon">
+	<script type="text/javascript" src="${ctxPath}/static/page/js/jquery-1.8.3.min.js"></script>
+	<script src="${ctxPath}/static/page/js/jquery.slideBox.min.js" type="text/javascript"></script>
+	<script src="${ctxPath}/static/page/js/jquery.leoweather.min.js"></script>
+	<script src="${ctxPath}/static/page/js/tab-zcl.js"></script>
+	<script src="${ctxPath}/static/page/js/scroll.js"></script>
+	<script src="${ctxPath}/static/page/js/Tabs.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/page/js/nav.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/page/js/scrolltext.js"></script>
+	<script type="text/javascript" src="${ctxPath}/static/page/js/comment.js"></script>
+</head>
+<html>
+	<body>
+		<div>
+			<div id="oneArticle" style="display: none;">${oneArticle}</div>
+			<div id="twoArticle" style="display: none;">${twoArticle}</div>
+			<div id="threeArticle" style="display: none;">${threeArticle}</div>
+			<div id="otherArticle" style="display: none;">${otherArticle}</div>
+			<div id="newsPicture" style="display: none;">${newsPicture}</div>
+
+			<!--头部导航-logo开始-->
+			<div class="top">
+				<div class="container">
+					<div id="weather" style="margin-left:10px;"></div>
+					<div class="toptxt">
+						<a href="#">当前用户：游客</a>|
+						<a id="addCollect" href="#" onclick="addCollect()">加入收藏夹</a>
+						<a href="/manage/login" target="_blank">管理员登录</a>
+					</div>
+				</div>
+			</div>
+			<!--头部背景logo-->
+			<div class="header"></div>
+			<div class="nav">
+				<ul class="" id="navul">
+					<li class="active"><a href="index"><img src="${ctxPath}/static/page/images/home.png" style="width:16px;"/>&nbsp;首页</a></li>
+					<li><a href="/page/summary">协会概况</a>
+						<ul>
+							<li><a href="/page/summary1">协会简介</a></li>
+							<li><a href="/page/summary2">协会章程</a></li>
+							<li><a href="/page/summary3">领导班子</a></li>
+							<li><a href="/page/summary4">联系我们</a></li>
+						</ul>
+					</li>
+					<li><a href="/page/articleList1">文件公告</a></li>
+					<li><a href="/page/articleList2">行业动态</a></li>
+					<li><a href="/page/articleList3">政策法规</a></li>
+					<li><a href="/page/download">下载中心</a></li>
+				</ul>
+			</div>
+			<!--头部导航-logo结束-->
+
+			<!--搜索-天气-限行-App二维码开始-->
+			<div class="weather_app">
+				<form id="searchForm" action="/page/search">
+					<input type="text" placeholder="请输入查询关键字" id="content" name="content" style="width:230px; padding:6px;border:2px solid #345D95;" />
+					&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="search" value="搜索"/>
+				</form>
+			</div>
+			<!--搜索结束-->
+			<div class="container container_col">
+
+				<!--第一部分轮播图新闻开始-->
+				<div class="news-notice">
+					<div class="indnews">
+						<div class="news-pic">
+							<div id="newspic" class="slideBox">
+								<ul class="items"></ul>
+							</div>
+						</div>
+					</div>
+					<div class="news-txt" id="news">
+						<div class="news-title">
+							<div class="news-name tab-nav j-tab-nav">
+								<a href="/page/articleList1" class="current">文件公告<i></i></a>
+							</div>
+							<a href="/page/articleList1" class="more">更多 >></a>
+						</div>
+						<div class="tab-con">
+							<div class="j-tab-con">
+								<div class="tab-con-item news-con" style="display: block;">
+									<ul id="news1" class="newslist"></ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<!--第一部分轮播图新闻结束-->
+
+				<div class="ad_NO1" style="margin-top:2px;"><img src="${ctxPath}/static/page/images/banner1.png" style="width: 1000px;height: 90px;" /></div>
+
+				<div class="clearfix"></div>
+
+				<!--新闻一模块开始  政策法规、行业动态--->
+				<div class="news-module1">
+					<div class="news-module1_l">
+						<div id="lib_Tab1_sx" class="lib_tabborder_sx"style="margin-bottom:5px;">
+							<div class="lib_Menubox_sx ">
+								<div class="hover"><a href="/page/articleList3"><image src="${ctxPath}/static/page/images/ico-shangjijingshen.png" class="li-img" />
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;政策法规</a>
+								</div>
+							</div>
+							<div class="lib_Contentbox_sx">
+								<ul id="news3" class="newslist-tab"></ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="news-module1_r">
+						<div class="news-module1_r_notice"  id="news-zhiban">
+							<div class="news-title">
+								<div class="news-name tab-nav j-tab-nav">
+									<a href="/page/articleList2" class="current">行业动态<i></i></a>
+								</div>
+								<a href="/page/articleList2" class="more">更多 >></a>
+							</div>
+							<div class="tab-con">
+								<div class="j-tab-con">
+									<div class="list_lh" style="display: block;">
+										<ul id="news2"></ul>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="clearfix"></div>
+
+				<!--新闻二模块开始 其他文章、文件中心-->
+				<div class="news-module2">
+					<div class="news_position_4" >
+						<div class="news-module1_l_4">
+							<div id="lib_Tab1_sx" class="lib_tabborder_sx">
+								<div class="lib_Menubox_sx ">
+									<div class="hover"><a href="/page/articleList4"><image src="${ctxPath}/static/page/images/ico-tongzhitongbao.png" class="li-img"/>
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;建设安全</a>
+									</div>
+								</div>
+								<div class="lib_Contentbox_sx">
+									<ul id="news0" class="newslist-tab"></ul>
+								</div>
+							</div>
+						</div>
+
+						<div class="news-module1_r_4">
+							<div class="news-caina caina-col-3">
+								<div class="news-title">
+									<div class="name">文件下载中心<i></i></div>
+									<a href="/page/download" class="more">更多 >></a>
+								</div>
+								<div class="news-con_table">
+									<div id="downloadRank" style="display: none;">${downloadRank}</div>
+									<table id="downloadRankTable"></table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!--新闻二模块结束-->
+
+				<div class="clearfix"></div>
+
+				<!--无限滚动图片开始-->
+				<div class="member-show">
+					<div class="name">会员展示<i></i></div>
+				</div>
+				<div id="marquee-wrap">
+					<div id="indemo">
+						<div id="demo1"></div>
+						<div id="demo2"></div>
+					</div>
+				</div>
+				<!--无限滚动图片结束-->
+
+				<!--友情链接开始-->
+				<div class="linksbox" id="link">
+					<div class="txtlisttit linktit"> <span>友情链接</span>
+					</div>
+					<div class="listcon tab-con">
+						<div class="tab-con-item linkcon">
+							<ul class="linkslist">
+								<li><a href="http://www.hnjs.gov.cn/" target="_blank">河南省住房和城乡建设厅</a></li>
+								<li><a href="http://www.zzjw.gov.cn/" target="_blank">郑州市城乡建设委员会</a></li>
+								<li><a href="http://www.hnzzmjzz.com/" target="_blank">郑州市社会组织信息网</a></li>
+							</ul>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+				<!--友情链接结束-->
+
+			</div>
+
+		</div><!--main结束-->
+
+		<div class="clearfix"></div>
+		<div class="foot">
+			<div class="foot-container">
+				<center>
+					<span><a href="/page/index" target="_blank">网站首页</a></span>|&nbsp;
+					<span><a href="/page/summary" target="_blank">协会概况</a></span>|&nbsp;
+					<span><a href="/manage/login" target="_blank">管理员登录</a></span>|&nbsp;
+					<span><a href="/manage/login" target="_blank">安全管理平台</a></span>|&nbsp;
+					<span><a href="/page/download">下载中心</a></span>|&nbsp;
+					<span><a href="#">联系我们</a></span>
+				</center>
+			</div>
+		</div>
+		<div class="foot">
+			<div class="foot-container">
+				<center>
+					Copyright © 2018 - 2023 郑州市建设安全管理协会
+					&nbsp;&nbsp;技术支持：旭宏信息技术有限公司&nbsp;&nbsp;
+					联系电话：0371-55636671
+				</center>
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+    // 文章及下载中心排行信息依次是：文件公告、行业动态、政策法规、下载中心
+    $(document).ready(function(){
+        var oneArticle = $.parseJSON($("#oneArticle").text());
+        var twoArticle = $.parseJSON($("#twoArticle").text());
+        var threeArticle = $.parseJSON($("#threeArticle").text());
+        var otherArticle = $.parseJSON($("#otherArticle").text());
+        var downloadRank = $.parseJSON($("#downloadRank").text());
+        var news1 = $('#news1');
+        var news2 = $('#news2');
+        var news3 = $('#news3');
+        var news0 = $('#news0');
+        var downloadRankTable = $('#downloadRankTable');
+
+        $.each(oneArticle[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+            news1.append(li);
+        });
+
+        $.each(twoArticle[0],function(index,item){
+            var li = "<li><p><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></p></li>";
+            news2.append(li);
+        });
+
+        $.each(threeArticle[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+            news3.append(li);
+        });
+
+        $.each(otherArticle[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.id+"'>"+item.title+"</a><span>"+new Date(item.createTime).format("MM-dd")+"</span></li>";
+            news0.append(li);
+        });
+
+        $.each(downloadRank[0],function(index,item){
+            console.log(item);
+            var $tr = $('<tr>');
+            var $td1 = $('<td width="80%">').html('<a href="/'+item.fileUrl+'" target="_blank">&nbsp;'+item.fileName+'</a>');
+            var $td2 = $('<td width="20%" align="right" >').html('&nbsp;&nbsp;&nbsp;&nbsp;'+new Date(item.uploadTime).format("MM-dd"));
+            $tr.append($td1);
+            $tr.append($td2);
+            downloadRankTable.append($tr);
+        });
+    });
+
+</script>
+
+<!--下方图片 无限滚动图片五张-->
+<script type="text/javascript">
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p1.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p2.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p3.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p4.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p5.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p6.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p7.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p8.jpg" border="0" /></a>';
+    document.getElementById("demo1").innerHTML += '<a href="#"><img src="${ctxPath}/static/page/images/p9.jpg" border="0" /></a>';
+
+    var speed=20;
+    var tab=document.getElementById("marquee-wrap");
+    var tab1=document.getElementById("demo1");
+    var tab2=document.getElementById("demo2");
+    tab2.innerHTML=tab1.innerHTML;
+    function Marquee(){
+        if(tab2.offsetWidth-tab.scrollLeft<=0)
+            tab.scrollLeft-=tab1.offsetWidth;
+        else{
+            tab.scrollLeft++;
+        }
+    }
+    var MyMar=setInterval(Marquee,speed);
+    tab.onmouseover=function() {clearInterval(MyMar)};
+    tab.onmouseout=function() {MyMar=setInterval(Marquee,speed)};
+</script>
+
+<!--新闻图片五张-->
+<script type="text/javascript">
+    $(document).ready(function(){
+        var articleArray = $.parseJSON($("#newsPicture").text());
+        var ul = $('.items');
+        $.each(articleArray[0],function(index,item){
+            var li = "<li><a href='/page/article/"+item.articleId+"' title='"+item.articleTitle+"'><img src='/"+item.pictureUrl+"'></a></li>";
+            ul.append(li);
+        });
+    });
+
+    jQuery(function($){
+        $('#newspic').slideBox({
+            duration : 0.3,//滚动持续时间，单位：秒
+            easing : 'linear',//swing,linear//滚动特效
+            delay : 5,//滚动延迟时间，单位：秒
+            hideClickBar : false,//不自动隐藏点选按键
+            clickBarRadius : 10
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $(function(){
+        $(".list_lh").myScroll({
+            speed:50, //数值越大，速度越慢
+            rowHeight:40 //li的高度
+        });
+    });
+    $('#weather').leoweather({format:'<span id="colock">{时段}好！现在时间是：{年}年{月}月{日}日 星期{周} {时}:{分}:{秒}</span>'});
+    $('.news-con_table table tr:odd').addClass('odd');
+    $(function() {$("#link").rTabs({bind : 'hover', animation : 'fadein', auto:false});});
+    $(function() {$("#news").rTabs({bind : 'hover', animation : 'fadein', auto:false});});
+    $(function() {$("#news-zhiban").rTabs({bind : 'hover', animation : 'fadein', auto:false});})
+</script>
+

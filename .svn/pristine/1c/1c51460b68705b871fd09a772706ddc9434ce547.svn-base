@@ -1,0 +1,5 @@
+package com.website.system.service;
+import com.baomidou.mybatisplus.service.IService;
+import com.website.system.model.Doctor;
+public interface DoctorService extends  IService<Doctor>{
+}

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>下载中心</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/css/x-admin.css" media="all">
+    <link rel="stylesheet" href="${ctxPath}/static/manage/layui/css/layui.css" media="all">
+    <script src="${ctxPath}/static/manage/layui/layui.js"></script>
+    <script src="${ctxPath}/static/manage/js/jquery.js"></script>
+</head>
+<body>
+    <div class="x-nav">
+        <span class="nav-breadcrumb">
+            <a><cite>后台管理></cite></a>
+            <a><cite>下载中心></cite></a>
+            <a><cite>文件列表</cite></a>
+        </span>
+    </div>
+    <div class="x-body">
+        <blockquote class="layui-elem-quote quoteBox">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input searchContent" placeholder="请输入医生名关键字" />
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn layui-btn-normal addNews_btn">添加医生</a>
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
+           <!-- <div class="layui-btn" id="uploadFile">
+                <i class="layui-icon">&#xe67c;</i>添加文件
+            </div>-->
+            <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"  href="javascript:location.replace(location.href);" title="刷新"><i class="layui-icon" style="line-height:30px">ဂ</i></a>
+        </blockquote>
+        <table id="doctorTable" lay-filter="doctorTable"></table>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    layui.use(['jquery', 'upload', 'table', 'layer', 'util'], function(){
+        var $ = layui.$, table = layui.table, layer = layui.layer, upload = layui.upload, util = layui.util;
+        var active = {
+            reload: function(){
+                table.reload('search_table_id', {
+                    where: {
+                        content: $('.searchContent').val(),
+                        page: 1
+                    }
+                });
+            }
+        };
+
+        table.render({
+            elem: '#doctorTable'
+            ,id: 'search_table_id'
+            ,height: 500
+            ,url: 'doctor/doctorTable'
+            ,page: true
+            ,limit: 10
+            ,limits : [10]
+            ,cols: [[
+                { checkbox: true, fixed: true },
+                { field: 'id', title: '序号', width:'6%', sort: true, fixed: true },
+                { field: 'name', title: '姓名', width:'16%', sort: true },
+                { field: 'sex', title: '性别', width:'14%',templet :function (d){
+                        return d.sex!=2?"男":"女"
+                     } },
+                { field: 'birthday', title: '生日',width:'10%', sort: true, templet :function (d){return util.toDateString(d.birthday);}},
+                { field: 'email', title: '邮件',width:'10%' },
+                 {field: 'phone', title: '手机号',width:'6%'
+
+                },
+                { field: 'tempId', title: '操作', width:'15%', templet: function(){
+                        return '<a class="layui-btn layui-btn-xs" lay-event="edit" lay-id="1"><i class="layui-icon layui-icon-edit"></i>修改</a>' +
+                            '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="2"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+                    }
+                }
+            ]]
+        });
+
+        // 搜索（利用定义的active重新载入表格）
+        $('.search_btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        $('.addNews_btn').on('click', function(){
+            layer.open({
+                title : "添加医生",
+                type : 2,
+                fix: false, //不固定
+                maxmin: true,
+                area: ['400px', '400px'],
+                content: "/manage/doctor/doctorAdd",
+                success: function (layero, index) {
+
+                }
+            });
+        });
+
+
+        // 监听工具条
+        table.on('tool(doctorTable)', function (obj) {
+            var data = obj.data, event = obj.event, tr = obj.tr;
+            switch(event){
+                case "edit":
+                    /*alert("edit")*/
+                    doctorUpdate(data);
+                    break;
+
+                case "del":
+                    /*alert("del")*/
+                    layer.confirm('真的删除行么？', function(index){
+                        layer.close(index);
+                      $.ajax({
+                            type: 'post',
+                            url: '/manage/doctor/deleteDoctor',
+                            data: {'id': data.id},
+                            success:function(result){
+                                alert(result);
+                                window.location.reload();      // 刷新
+                            }
+                        });
+                    });
+                    break;
+            }
+        });
+    });
+    // 编辑
+    function doctorUpdate(rowData) {
+        layer.open({
+            title : "编辑" + rowData.name,
+            type : 2,
+            fix: false, //不固定
+            maxmin: true,
+            area: ['1000px', '600px'],
+            content: "/manage/doctor/selDoctor/" + rowData.id,
+            success: function (layero, index) {
+                // 回显下拉框
+                /*var body = layui.layer.getChildFrame('body', index);
+                body.find(".typeSelect select").val(articleType);*/
+            }
+        });
+    }
+  /*  function doctorUpdate(rowData) {
+        alert("up***"+rowData.id)
+
+        layer.open({
+            title : "编辑",
+            type : 2,
+            fix: false, //不固定
+            maxmin: true,
+            area: ['1000px', '600px'],
+            content: "manage/doctor/goDoctorUpde",
+            success: function (layero, index) {
+
+            }
+        });
+
+
+    }
+*/
+    /*
+
+     $.ajax({
+            type: 'post',
+            url: '/manage/doctor/selDoctor',
+            data: {'id': rowData.id},
+            success:function(result){
+                if(result!=null){
+
+                }
+
+            }
+        });
+    */
+   /* function doctorUpdate(rowData) {
+        layer.open({
+            title : "编辑 " + rowData.name+" 医师信息",
+            type : 2,
+            fix: false, //不固定
+            maxmin: true,
+            area: ['1000px', '600px'],
+            content: "manage/doctor/selDoctor/"+rowData.id,
+            success: function (layero, index) {
+                // 回显下拉框
+               /!* var body = layui.layer.getChildFrame('body', index);
+                body.find(".typeSelect select").val(sex);*!/
+            }
+        });
+    }*/
+
+</script>
