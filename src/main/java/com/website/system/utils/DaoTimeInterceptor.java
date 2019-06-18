@@ -10,13 +10,11 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
-
 */
 /**
  *
  * 通过aop拦截后执行具体操作(controller全拦截)
  *//*
-
 
 @Aspect
 @Component
@@ -33,18 +31,14 @@ public class DaoTimeInterceptor {
         stopWatch.start();
         Object obj = pjp.proceed(pjp.getArgs());
         stopWatch.stop();
-
         long cost = stopWatch.getTotalTimeMillis();
         if(cost > 10) {
             MethodSignature signature = (MethodSignature) pjp.getSignature();
             String methodName = signature.getDeclaringTypeName() + "." + signature.getName();
-
             System.out.println("----------- 执行" + methodName + "方法, 用时: " + cost + "ms -----------");
         }
-
         return obj;
     }
-
 }
 
 */
