@@ -31,6 +31,8 @@ beetl:
 
 ###################  spring配置  ###################
 spring:
+  aop:
+    aspectj-autoproxy proxy-target-class: true
   profiles:
     active: produce
   mvc:

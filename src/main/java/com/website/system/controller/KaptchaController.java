@@ -6,6 +6,7 @@ import com.website.common.controller.BaseController;
 import com.website.common.warpper.ImageArticle;
 import com.website.common.warpper.ResultMap;
 import com.website.core.util.DateUtil;
+import com.website.system.utils.AopTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,7 @@ public class KaptchaController extends BaseController {
     /**
      * 生成验证码
      */
+    @AopTime
     @RequestMapping("")
     public void kaptcha(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();

@@ -1,4 +1,3 @@
-/*
 
 package com.website.system.utils;
 
@@ -11,20 +10,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
 
-*/
 /**
  *
- * 通过aop拦截后执行具体操作(controller全拦截)
- *//*
-
+ * 通过aop拦截后执行具体操作（通过注解拦截）: @AopTime
+ */
 
 @Aspect
 @Component
-public class DaoTimeInterceptor {
+public class AopTimeUtil {
 
-    private final static String POINT = "execution(* com.website.system.controller.*.*(..))";
 
-    @Pointcut(POINT)
+    @Pointcut(value = "@annotation(com.website.system.utils.AopTime)")
     public void recordLog(){}
 
     @Around("recordLog()")
@@ -47,4 +43,3 @@ public class DaoTimeInterceptor {
 
 }
 
-*/

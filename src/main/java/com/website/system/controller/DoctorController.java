@@ -10,6 +10,7 @@ import com.website.system.model.DoctorCategory;
 import com.website.system.model.vo.DoctorDto;
 import com.website.system.service.DoctorCategoryService;
 import com.website.system.service.DoctorService;
+import com.website.system.utils.AopTime;
 import io.swagger.annotations.ApiOperation;
 import net.sf.json.JSONObject;
 import org.apache.ibatis.annotations.Param;
@@ -51,6 +52,7 @@ public class DoctorController extends BaseController {
         return "manage/doctor";
     }
 
+    @AopTime
     @ApiOperation("下载中心JSON数据")
     @ResponseBody
     @RequestMapping("/doctorTable")
